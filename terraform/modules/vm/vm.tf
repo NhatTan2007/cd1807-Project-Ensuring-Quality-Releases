@@ -15,12 +15,12 @@ resource "azurerm_linux_virtual_machine" "main" {
   name                = "${var.application_type}-${var.resource_type}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group}"
-  size                = "Standard_D1_v2"
+  size                = "Standard_B1s"
   admin_username      = "${var.admin_username}"
   network_interface_ids = [azurerm_network_interface.main.id]
   admin_ssh_key {
     username   = "${var.admin_username}"
-    public_key = file("~/.ssh/id_rsa.pub")
+    public_key = "${var.rsa_keygen}"
   }
   os_disk {
     caching           = "ReadWrite"

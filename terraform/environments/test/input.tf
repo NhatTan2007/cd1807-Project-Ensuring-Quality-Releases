@@ -17,4 +17,5 @@ variable address_space {}
 
 # Vm
 variable "admin_username" {}
+variable "rsa_keygen" {}
 
