@@ -98,9 +98,6 @@ stages:
     dependsOn: CreateInfrastructure
     condition: succeeded()
     jobs:
-      #--------------------------------------------#
-      # Deploy FakeRestAPI Web App
-      # ToDo: Provide <environment name> you created in your DevOps project
       - deployment: FakeRestAPI
         pool:
           vmImage: "ubuntu-latest"
