@@ -89,7 +89,6 @@ stages:
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
 
           - task: PublishPipelineArtifact@1
-          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
             displayName: "Upload Package"
             inputs:
               targetPath: "$(Build.BuildId)-fakerestapi.zip"
