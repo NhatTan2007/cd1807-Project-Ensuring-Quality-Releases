@@ -96,6 +96,7 @@ stages:
 
   - stage: DeployWebApp
     dependsOn: CreateInfrastructure
+    condition: succeeded()
     jobs:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
