@@ -1,15 +1,19 @@
 # Azure subscription vars
-subscription_id = ""
-client_id = ""
-client_secret = ""
-tenant_id = ""
+subscription_id = "8fe1dbe4-e54f-485c-8411-03ffcdc47c19"
+client_id       = "b4f6e432-738f-472a-ab41-74a8d36df52f"
+client_secret   = "4ZG8Q~HEIVLZcdad4AC.hs35Hjn4-kp5oZQFRc1O"
+tenant_id       = "d5309172-5a06-4d46-8e50-c7879e48c060"
 
 # Resource Group/Location
-location = ""
-resource_group_name = ""
-application_type = ""
+location         = "eastus"
+resource_group   = "tanttn-udacity-devops-terraform"
+application_type = "udacityDevops"
 
 # Network
-virtual_network_name = ""
-address_space = ["10.5.0.0/16"]
-address_prefix_test = "10.5.1.0/24"
+virtual_network_name = "tanttn-udacity"
+address_space        = ["10.5.0.0/16"]
+address_prefix_test  = "10.5.1.0/24"
+address_prefixes     = ["10.5.1.0/24"]
+
+# Vm
+admin_username     = "tanttn"
