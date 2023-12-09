@@ -94,26 +94,26 @@ stages:
             inputs:
               targetPath: "$(Build.BuildId)-fakerestapi.zip"
               artifact: tanttn-fakerestapi
-- stage: DeployWebApp
-  jobs:
-  #--------------------------------------------#
-  # Deploy FakeRestAPI Web App
-  # ToDo: Provide <environment name> you created in your DevOps project
-  - deployment: FakeRestAPI
-    pool:
-      vmImage: 'ubuntu-latest'
-    environment: 'tanttnUdacityDevops-AppService'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureWebApp@1
-            displayName: 'Deploy Azure Web App'
-            inputs:
-              azureSubscription: '8fe1dbe4-e54f-485c-8411-03ffcdc47c19'
-              appName: 'tanttnUdacityDevops-AppService'
-              appType: webApp
-              package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip         
+  - stage: DeployWebApp
+    jobs:
+      #--------------------------------------------#
+      # Deploy FakeRestAPI Web App
+      # ToDo: Provide <environment name> you created in your DevOps project
+      - deployment: FakeRestAPI
+        pool:
+          vmImage: "ubuntu-latest"
+        environment: "tanttnUdacityDevops-AppService"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: "Deploy Azure Web App"
+                  inputs:
+                    azureSubscription: "8fe1dbe4-e54f-485c-8411-03ffcdc47c19"
+                    appName: "tanttnUdacityDevops-AppService"
+                    appType: webApp
+                    package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
