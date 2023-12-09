@@ -23,7 +23,7 @@ stages:
 #--------------------------------------------#  
 # BUILD STAGE
 #--------------------------------------------#    
-- stage: Create Infrastructure
+- stage: Create_Infrastructure
   jobs:
   - job: BuildInfrastructure
     steps:
