@@ -88,9 +88,12 @@ stages:
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
 
-          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
+          - task: PublishPipelineArtifact@1
             displayName: "Upload Package"
-            artifact: tanttn-fakerestapi
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"'
+              artifact: 'tanttn-fakerestapi'
+
   - stage: DeployWebApp
     dependsOn: CreateInfrastructure
     jobs:
