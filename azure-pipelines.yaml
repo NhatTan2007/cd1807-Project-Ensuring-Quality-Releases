@@ -108,7 +108,7 @@ stages:
                 - task: AzureWebApp@1
                   displayName: "Deploy Azure Web App"
                   inputs:
-                    azureSubscription: "8fe1dbe4-e54f-485c-8411-03ffcdc47c19"
+                    azureSubscription: "f0c56712-80d8-43e9-b7cb-fe2bcf946c53"
                     appName: "tanttnUdacityDevops-AppService"
                     appType: webApp
                     package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
