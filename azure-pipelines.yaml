@@ -88,12 +88,11 @@ stages:
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
 
-          - task: PublishPipelineArtifact@1
+          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
             displayName: "Upload Package"
-            inputs:
-              targetPath: "$(Build.BuildId)-fakerestapi.zip"
-              artifact: tanttn-fakerestapi
+            artifact: tanttn-fakerestapi
   - stage: DeployWebApp
+    dependsOn: CreateInfrastructure
     jobs:
       #--------------------------------------------#
       # Deploy FakeRestAPI Web App
@@ -101,7 +100,7 @@ stages:
       - deployment: FakeRestAPI
         pool:
           vmImage: "ubuntu-latest"
-        environment: "tanttnUdacityDevops-AppService"
+        environment: "tantnt-udacity-test-env"
         strategy:
           runOnce:
             deploy:
