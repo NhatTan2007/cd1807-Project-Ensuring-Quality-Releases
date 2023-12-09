@@ -113,6 +113,7 @@ stages:
                     appName: "tanttnUdacityDevops-AppService"
                     appType: webApp
                     package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                    deploymentMethod: 'auto'
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
