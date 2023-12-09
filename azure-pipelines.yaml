@@ -86,13 +86,13 @@ stages:
               rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
               includeRootFolder: false
               archiveType: "zip"
-              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"
+              archiveFile: "$(Build.BuildId)-fakerestapi.zip"
 
           - task: PublishPipelineArtifact@1
             displayName: "Upload Package"
             inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip"'
-              artifact: 'tanttn-fakerestapi'
+              targetPath: "$(Build.BuildId)-fakerestapi.zip"
+              artifact: "tanttn-fakerestapi"
 
   - stage: DeployWebApp
     dependsOn: CreateInfrastructure
