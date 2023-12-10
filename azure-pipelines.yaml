@@ -85,7 +85,7 @@ stages:
           vmImage: "windows-latest"
 
         variables:
-          solution: "**/FakeRESTApi.Web.csproj"
+          solution: "**/*.sln"
           buildPlatform: "Any CPU"
           buildConfiguration: "Release"
 
@@ -118,7 +118,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: "Upload Package"
             inputs:
-              targetPath: "$(Build.BuildId)-fakerestapi.zip"
+              targetPath: "FakeRESTApi.Web.zip"
               artifact: "tanttn-fakerestapi"
 
   - stage: DeployWebApp
@@ -139,7 +139,7 @@ stages:
                     azureSubscription: "f0c56712-80d8-43e9-b7cb-fe2bcf946c53"
                     appName: "tanttnUdacityDevops-AppService"
                     appType: webApp
-                    package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                    package: $(Pipeline.Workspace)/tanttn-fakerestapi/FakeRESTApi.Web.zip
                     deploymentMethod: "auto"
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
