@@ -85,7 +85,7 @@ stages:
           vmImage: "windows-latest"
 
         variables:
-          solution: "**/*.sln"
+          solution: "**/FakeRESTApi.Web.csproj"
           buildPlatform: "Any CPU"
           buildConfiguration: "Release"
 
@@ -107,13 +107,13 @@ stages:
         dependsOn: BuildASPNetCore
         condition: succeeded()
         steps:
-          - task: ArchiveFiles@2
-            displayName: "Archive FakeRestAPI"
-            inputs:
-              rootFolderOrFile: "$(build.artifactStagingDirectory)"
-              includeRootFolder: false
-              archiveType: "zip"
-              archiveFile: "$(Build.BuildId)-fakerestapi.zip"
+          # - task: ArchiveFiles@2
+          #   displayName: "Archive FakeRestAPI"
+          #   inputs:
+          #     rootFolderOrFile: "$(build.artifactStagingDirectory)"
+          #     includeRootFolder: false
+          #     archiveType: "zip"
+          #     archiveFile: "$(Build.BuildId)-fakerestapi.zip"
 
           - task: PublishPipelineArtifact@1
             displayName: "Upload Package"
