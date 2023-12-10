@@ -78,12 +78,35 @@ stages:
               command: "apply"
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+      - job: BuildASPNetCore
+        pool:
+          vmImage: "windows-latest"
+
+        variables:
+          solution: "**/*.sln"
+          buildPlatform: "Any CPU"
+          buildConfiguration: "Release"
+
+        steps:
+          - task: NuGetToolInstaller@1
+
+          - task: NuGetCommand@2
+            inputs:
+              restoreSolution: "$(solution)"
+
+          - task: VSBuild@1
+            inputs:
+              workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
+              solution: "$(solution)"
+              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+              platform: "$(buildPlatform)"
+              configuration: "$(buildConfiguration)"
       - job: PackageDeploymentFiles
         steps:
           - task: ArchiveFiles@2
             displayName: "Archive FakeRestAPI"
             inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
+              rootFolderOrFile: "$(build.artifactStagingDirectory)"
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.BuildId)-fakerestapi.zip"
@@ -113,7 +136,7 @@ stages:
                     appName: "tanttnUdacityDevops-AppService"
                     appType: webApp
                     package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-                    deploymentMethod: 'auto'
+                    deploymentMethod: "auto"
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
