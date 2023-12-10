@@ -100,7 +100,7 @@ stages:
             inputs:
               workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi"
               solution: "$(solution)"
-              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)" /p:OutDir="$(Build.ArtifactStagingDirectory)"'
+              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
               platform: "$(buildPlatform)"
               configuration: "$(buildConfiguration)"
       - job: PackageDeploymentFiles
