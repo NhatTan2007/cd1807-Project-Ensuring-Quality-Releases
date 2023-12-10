@@ -79,6 +79,8 @@ stages:
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
       - job: BuildASPNetCore
+        dependsOn: BuildInfrastructure
+        condition: succeeded()
         pool:
           vmImage: "windows-latest"
 
@@ -102,6 +104,8 @@ stages:
               platform: "$(buildPlatform)"
               configuration: "$(buildConfiguration)"
       - job: PackageDeploymentFiles
+        dependsOn: BuildASPNetCore
+        condition: succeeded()
         steps:
           - task: ArchiveFiles@2
             displayName: "Archive FakeRestAPI"
