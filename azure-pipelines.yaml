@@ -118,7 +118,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: "Upload Package"
             inputs:
-              targetPath: "FakeRESTApi.Web.zip"
+              targetPath: "$(Build.ArtifactStagingDirectory)/FakeRESTApi.Web.zip"
               artifact: "tanttn-fakerestapi"
 
   - stage: DeployWebApp
