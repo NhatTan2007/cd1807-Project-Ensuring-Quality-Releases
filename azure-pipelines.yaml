@@ -79,7 +79,7 @@ stages:
               workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
               environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
       - job: PackageDeploymentFiles
-        dependsOn: BuildASPNetCore
+        dependsOn: BuildInfrastructure
         condition: succeeded()
         steps:
           - task: ArchiveFiles@2
