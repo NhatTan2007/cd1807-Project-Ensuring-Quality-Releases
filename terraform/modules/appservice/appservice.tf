@@ -17,6 +17,5 @@ resource "azurerm_windows_web_app" "test" {
   }
   site_config {
     always_on          = false
-    windows_fx_version = "dotnet|6"
   }
 }
