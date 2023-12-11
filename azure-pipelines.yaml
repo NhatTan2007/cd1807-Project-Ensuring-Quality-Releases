@@ -146,12 +146,11 @@ stages:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: "${python.version}"
-              addToPath: true
           - script: |
-              cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
               python3 -m venv env
               source env/bin/activate
               pip install -r requirements.txt
+            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
             displayName: 'Set up Python environment'
           - script: |
               cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
