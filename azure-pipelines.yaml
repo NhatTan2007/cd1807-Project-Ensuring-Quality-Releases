@@ -59,7 +59,8 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'custom'
-              customCommand: 'terraform force-unlock -force 63f4c18b-a46c-6204-6f02-9f1626f05fff'
+              customCommand: 'force-unlock'
+              commandOptions: '-force 63f4c18b-a46c-6204-6f02-9f1626f05fff'
               outputTo: 'console'
               environmentServiceNameAzureRM: 'tanttn-udacity-devops'
 
