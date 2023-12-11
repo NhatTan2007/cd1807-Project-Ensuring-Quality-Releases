@@ -117,8 +117,8 @@ stages:
   #                   package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
   #                   deploymentMethod: "auto"
   - stage: Testing
-    # dependsOn: DeployWebApp
-    # condition: succeeded()
+    dependsOn: DeployWebApp
+    condition: succeeded()
     jobs:
       # - job: JMeterTest
       #   displayName: Performance testing by JMeter
@@ -154,8 +154,8 @@ stages:
       #       displayName: "Upload Performance Test Result"
       #       artifact: tanttn-perftests
       - job: SeleniumTest
-        # dependsOn: JMeterTest
-        # condition: succeeded()
+        dependsOn: JMeterTest
+        condition: succeeded()
         displayName: UI Testing By Selenium
         pool:
           vmImage: "ubuntu-latest"
