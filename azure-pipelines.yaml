@@ -11,7 +11,7 @@ trigger:
 # pool: myAgentPool
 
 variables:
-  python.version: "3.8.18"
+  python.version: "3.8"
   # ToDo: Replace the service connection name as used in the DevOps project settings
   azureServiceConnectionId: "f0c56712-80d8-43e9-b7cb-fe2bcf946c53"
   # Project root folder. Point to the folder containing manage.py file.
@@ -160,9 +160,6 @@ stages:
         pool:
           vmImage: "ubuntu-latest"
         steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: "${python.version}"
           - script: |
               python3 -m venv env
               source env/bin/activate
