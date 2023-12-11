@@ -188,7 +188,7 @@ stages:
                     script: |
                       #!bin/bash
                       chromium-browser -version
-                      chromium-driver -version
+                      chromium-driver --version
                       cd $(Pipeline.Workspace)/tanttn-selenium
                       unzip -o $(Build.BuildId)-selenium.zip
                       sudo mkdir -p /var/log/selenium
