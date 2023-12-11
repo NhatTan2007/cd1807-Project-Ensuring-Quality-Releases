@@ -125,25 +125,24 @@ stages:
         pool:
           vmImage: "ubuntu-latest"
         steps:
-          - bash: |
-            wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
-            tar -xzvf apache-jmeter-5.6.2.tgz
-          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-          displayName: 'Install JMeter'
-          # JMeter (Performance) Test Suite - Archive
-          - bash: |
-            jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv
-          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-          displayName: 'Execute JMeter Test Stress Test'
-          - bash: |
-            jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv
-          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-          displayName: 'Execute JMeter Test Endurance Test'
-          - bash: |
-            jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-stress-test.csv --generate-report html-report/stress-test
-            jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-endurance-test.csv --generate-report html-report/endurance-test
-          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-          displayName: 'Generate HTML Report'
+          - script: |
+              wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
+              tar -xzvf apache-jmeter-5.6.2.tgz
+            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+            displayName: 'Install JMeter'
+          - script: |
+              jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv
+            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+            displayName: 'Execute JMeter Test Stress Test'
+          - script: |
+              jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv
+            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+            displayName: 'Execute JMeter Test Endurance Test'
+          - script: |
+              jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-stress-test.csv --generate-report html-report/stress-test
+              jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-endurance-test.csv --generate-report html-report/endurance-test
+            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+            displayName: 'Generate HTML Report'
           - task: ArchiveFiles@2
             displayName: "Archive PerformanceTestSuite"
             inputs:
