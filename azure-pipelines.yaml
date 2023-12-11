@@ -54,15 +54,15 @@ stages:
               provider: "azurerm"
               command: "validate"
 
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-            displayName: Terraform Unlock State
-            inputs:
-              provider: 'azurerm'
-              command: 'custom'
-              customCommand: 'force-unlock'
-              commandOptions: '-force 63f4c18b-a46c-6204-6f02-9f1626f05fff'
-              outputTo: 'console'
-              environmentServiceNameAzureRM: 'tanttn-udacity-devops'
+          # - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+          #   displayName: Terraform Unlock State
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'custom'
+          #     customCommand: 'force-unlock'
+          #     commandOptions: '-force 63f4c18b-a46c-6204-6f02-9f1626f05fff'
+          #     outputTo: 'console'
+          #     environmentServiceNameAzureRM: 'tanttn-udacity-devops'
 
           # OPTIONAL - This step is needed only if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it.
           # Generate an SSH key pair in your local/AZ Cloud shell. Use the public key in the Terraform VM module.
