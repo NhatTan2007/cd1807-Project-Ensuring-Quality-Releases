@@ -91,10 +91,28 @@ stages:
               archiveFile: "$(Build.BuildId)-fakerestapi.zip"
 
           - task: PublishPipelineArtifact@1
-            displayName: "Upload Package"
+            displayName: "Upload Fake RestAPI"
             inputs:
               targetPath: "$(Build.BuildId)-fakerestapi.zip"
               artifact: "tanttn-fakerestapi"
+      - job: PackageSelenium
+        dependsOn: PackageDeploymentFiles
+        condition: succeeded()
+        steps:
+          - task: ArchiveFiles@2
+            displayName: "Archive Selenium"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.BuildId)-selenium.zip"
+              replaceExistingArchive: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Upload Selenium"
+            inputs:
+              targetPath: "$(Build.BuildId)-selenium.zip"
+              artifact: "tanttn-selenium"
 
   - stage: DeployWebApp
     dependsOn: CreateInfrastructure
@@ -153,32 +171,46 @@ stages:
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
             displayName: "Upload Performance Test Result"
             artifact: tanttn-perftests
-      - job: SeleniumTest
+      - deployment: TestOnVM
         dependsOn: JMeterTest
         condition: succeeded()
         displayName: UI Testing By Selenium
         pool:
           vmImage: "ubuntu-latest"
-        steps:
-          - script: |
-              pip install selenium==4.12.0
-              pip install pytest
-              pip install pytest-html
-            displayName: "Install Plugins"
-          - script: "pytest --html=report-ui.html test_ui.py"
-            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
-            displayName: "Execute UI Test Suite"
-          - task: ArchiveFiles@2
-            displayName: "Archive UI Test Suite"
-            inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium/test_ui.log"
-              includeRootFolder: false
-              archiveType: "zip"
-              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
-          # JMeter Test Suite - Publish
-          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
-            displayName: "Upload UI Test Result"
-            artifact: tanttn-test-ui
+        environment: "tantnt-udacity-test-env"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: "$(Build.BuildId)-selenium.zip"
+                    destinationFolder: "$(System.DefaultWorkingDirectory)/selenium"
+                    workingDirectory: "$(Pipeline.Workspace)/tanttn-selenium"
+                    cleanDestinationFolder: true
+                    overwriteExistingFiles: true
+                - bash: |
+                    python3 -m venv env
+                    source env/bin/activate
+                    pip install -r requirements.txt
+                  workingDirectory: "$(System.DefaultWorkingDirectory)/selenium"
+                  displayName: "Set up Python environment"
+                - script: |
+                    cd $(System.DefaultWorkingDirectory)/selenium
+                    python login.py > test_ui.log
+                    python login.py
+                  displayName: "Execute UI Test Suite"
+                - task: ArchiveFiles@2
+                  displayName: "Archive UI Test Suite"
+                  inputs:
+                    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium/test_ui.log"
+                    includeRootFolder: false
+                    archiveType: "zip"
+                    archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
+                # JMeter Test Suite - Publish
+                - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
+                  displayName: "Upload UI Test Result"
+                  artifact: tanttn-test-ui
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
