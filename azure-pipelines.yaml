@@ -91,10 +91,28 @@ stages:
               archiveFile: "$(Build.BuildId)-fakerestapi.zip"
 
           - task: PublishPipelineArtifact@1
-            displayName: "Upload Package"
+            displayName: "Upload Fake RestAPI"
             inputs:
               targetPath: "$(Build.BuildId)-fakerestapi.zip"
               artifact: "tanttn-fakerestapi"
+      - job: PackageSelenium
+        dependsOn: PackageDeploymentFiles
+        condition: succeeded()
+        steps:
+          - task: ArchiveFiles@2
+            displayName: "Archive Selenium"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.BuildId)-selenium.zip"
+              replaceExistingArchive: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Upload Selenium"
+            inputs:
+              targetPath: "$(Build.BuildId)-selenium.zip"
+              artifact: "tanttn-selenium"
 
   - stage: DeployWebApp
     dependsOn: CreateInfrastructure
@@ -129,18 +147,18 @@ stages:
               wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
               tar -xzvf apache-jmeter-5.6.2.tgz
             workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: 'Install JMeter'
+            displayName: "Install JMeter"
           - script: |
               mkdir -p html-report/stress-test
               apache-jmeter-5.6.2/bin/jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv -e -o html-report/stress-test
             workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: 'Execute JMeter Test Stress Test'
+            displayName: "Execute JMeter Test Stress Test"
 
           - script: |
               mkdir -p html-report/endurance-test
               apache-jmeter-5.6.2/bin/jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv -e -o html-report/endurance-test
             workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: 'Execute JMeter Test Endurance Test'
+            displayName: "Execute JMeter Test Endurance Test"
 
           - task: ArchiveFiles@2
             displayName: "Archive PerformanceTestSuite"
@@ -164,29 +182,35 @@ stages:
           runOnce:
             deploy:
               steps:
-              - bash: |
-                  python3 -m venv env
-                  source env/bin/activate
-                  pip install -r requirements.txt
-                workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
-                displayName: "Set up Python environment"
-              - script: |
-                  cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
-                  python login.py > test_ui.log
-                  python login.py
-                displayName: "Execute UI Test Suite"
-              - task: ArchiveFiles@2
-                displayName: "Archive UI Test Suite"
-                inputs:
-                  rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium/test_ui.log"
-                  includeRootFolder: false
-                  archiveType: "zip"
-                  archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
-              # JMeter Test Suite - Publish
-              - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
-                displayName: "Upload UI Test Result"
-                artifact: tanttn-test-ui
-
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: "$(Build.BuildId)-selenium.zip"
+                    destinationFolder: "$(System.DefaultWorkingDirectory)/selenium"
+                    workingDirectory: "$(Pipeline.Workspace)/tanttn-selenium"
+                    cleanDestinationFolder: true
+                    overwriteExistingFiles: true
+                - bash: |
+                    python3 -m venv env
+                    source env/bin/activate
+                    pip install -r requirements.txt
+                  workingDirectory: "$(System.DefaultWorkingDirectory)/selenium"
+                  displayName: "Set up Python environment"
+                - script: |
+                    cd $(System.DefaultWorkingDirectory)/selenium
+                    python login.py > test_ui.log
+                    python login.py
+                  displayName: "Execute UI Test Suite"
+                - task: ArchiveFiles@2
+                  displayName: "Archive UI Test Suite"
+                  inputs:
+                    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium/test_ui.log"
+                    includeRootFolder: false
+                    archiveType: "zip"
+                    archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
+                # JMeter Test Suite - Publish
+                - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
+                  displayName: "Upload UI Test Result"
+                  artifact: tanttn-test-ui
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
