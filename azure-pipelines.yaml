@@ -182,33 +182,26 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: ExtractFiles@1
+                - task: Bash@3
                   inputs:
-                    archiveFilePatterns: "$(Build.BuildId)-selenium.zip"
-                    destinationFolder: "$(System.DefaultWorkingDirectory)/selenium"
-                    workingDirectory: "$(Pipeline.Workspace)/tanttn-selenium"
-                    cleanDestinationFolder: true
-                    overwriteExistingFiles: true
-                - bash: |
-                    python3 -m venv env
-                    source env/bin/activate
-                    pip install -r requirements.txt
-                  workingDirectory: "$(System.DefaultWorkingDirectory)/selenium"
-                  displayName: "Set up Python environment"
-                - script: |
-                    cd $(System.DefaultWorkingDirectory)/selenium
-                    python login.py > test_ui.log
-                    python login.py
+                    targetType: inline
+                    script: |
+                      #!bin/bash
+                      chromium-browser -version
+                      chromium-driver -version
+                      cd $(Pipeline.Workspace)/tanttn-selenium
+                      unzip -o $(Build.BuildId)-selenium.zip
+                      sudo mkdir -p /var/log/selenium
+                      sudo chmod 664 /var/log/selenium
+                      python 3 login.py > ui-logs.log
+                      python 3 login.py
+                      sudo mv ui-logs.log /var/log/selenium
+                      cd $(System.DefaultWorkingDirectory)
+                      mkdir -p log/selenium
+                      sudo cp /var/log/selenium/ui-logs.log log/selenium
                   displayName: "Execute UI Test Suite"
-                - task: ArchiveFiles@2
-                  displayName: "Archive UI Test Suite"
-                  inputs:
-                    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium/test_ui.log"
-                    includeRootFolder: false
-                    archiveType: "zip"
-                    archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
                 # JMeter Test Suite - Publish
-                - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
+                - publish: $(Build.ArtifactStagingDirectory)/log/selenium/ui-logs.log
                   displayName: "Upload UI Test Result"
                   artifact: tanttn-test-ui
 #     # ToDo: Change the workingDirectory path, as applicable to you
