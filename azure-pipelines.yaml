@@ -20,139 +20,139 @@ variables:
   environmentName: "test"
 
 stages:
-  #--------------------------------------------#
-  # BUILD STAGE
-  #--------------------------------------------#
-  - stage: CreateInfrastructure
-    jobs:
-      - job: BuildInfrastructure
-        steps:
-          #--------------------------------------------#
-          # Use Terraform to create the Infrastructure
-          # Install Terraform on the pipeline agent
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-            displayName: "Terrafom installation"
-            inputs:
-              terraformVersion: "1.5.5"
+  # #--------------------------------------------#
+  # # BUILD STAGE
+  # #--------------------------------------------#
+  # - stage: CreateInfrastructure
+  #   jobs:
+  #     - job: BuildInfrastructure
+  #       steps:
+  #         #--------------------------------------------#
+  #         # Use Terraform to create the Infrastructure
+  #         # Install Terraform on the pipeline agent
+  #         - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+  #           displayName: "Terrafom installation"
+  #           inputs:
+  #             terraformVersion: "1.5.5"
 
-          # Run Terraform Init on the pipeline agent
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-            displayName: "Terrafom init"
-            inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              backendServiceArm: "$(azureServiceConnectionId)"
-              backendAzureRmResourceGroupName: "tanttn-udacity-devops"
-              backendAzureRmStorageAccountName: "tfstate1000224335"
-              backendAzureRmContainerName: "tfstate"
-              backendAzureRmKey: "test.terraform.tfstate"
+  #         # Run Terraform Init on the pipeline agent
+  #         - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+  #           displayName: "Terrafom init"
+  #           inputs:
+  #             provider: "azurerm"
+  #             command: "init"
+  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+  #             backendServiceArm: "$(azureServiceConnectionId)"
+  #             backendAzureRmResourceGroupName: "tanttn-udacity-devops"
+  #             backendAzureRmStorageAccountName: "tfstate1000224335"
+  #             backendAzureRmContainerName: "tfstate"
+  #             backendAzureRmKey: "test.terraform.tfstate"
 
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-            displayName: Terraform validate
-            inputs:
-              provider: "azurerm"
-              command: "validate"
+  #         - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+  #           displayName: Terraform validate
+  #           inputs:
+  #             provider: "azurerm"
+  #             command: "validate"
 
-          # OPTIONAL - This step is needed only if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it.
-          # Generate an SSH key pair in your local/AZ Cloud shell. Use the public key in the Terraform VM module.
-          # Install public key and private key file to the pipeline agent, using the task below.
-          # ToDo: Change the inputs value below
-          # - task: InstallSSHKey@0
-          #   inputs:
-          #     knownHostsEntry: 'KNOWN_HOSTS_STRING' # variable value
-          #     sshPublicKey: 'PUBLIC_KEY'            # variable value
-          #     sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
+  #         # OPTIONAL - This step is needed only if your Terraform VM uses an SSH key pair for login and you want your pipeline agent to connect to it.
+  #         # Generate an SSH key pair in your local/AZ Cloud shell. Use the public key in the Terraform VM module.
+  #         # Install public key and private key file to the pipeline agent, using the task below.
+  #         # ToDo: Change the inputs value below
+  #         # - task: InstallSSHKey@0
+  #         #   inputs:
+  #         #     knownHostsEntry: 'KNOWN_HOSTS_STRING' # variable value
+  #         #     sshPublicKey: 'PUBLIC_KEY'            # variable value
+  #         #     sshKeySecureFile: 'id_rsa' # Use secure file feature in the pipeline library UI to save the "id_rsa" file, as mentioned here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops#add-a-secure-file
 
-          # - task: DownloadSecureFile@1
-          #  name: udacity_public_key
-          #  displayName:
-          #  inputs:
-          #   secureFile:
+  #         # - task: DownloadSecureFile@1
+  #         #  name: udacity_public_key
+  #         #  displayName:
+  #         #  inputs:
+  #         #   secureFile:
 
-          # Run Terraform Apply
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-            displayName: Terraform apply
-            inputs:
-              provider: "azurerm"
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
-              environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
-      - job: PackageDeploymentFiles
-        dependsOn: BuildInfrastructure
-        condition: succeeded()
-        steps:
-          - task: ArchiveFiles@2
-            displayName: "Archive FakeRestAPI"
-            inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi"
-              includeRootFolder: false
-              archiveType: "zip"
-              archiveFile: "$(Build.BuildId)-fakerestapi.zip"
+  #         # Run Terraform Apply
+  #         - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+  #           displayName: Terraform apply
+  #           inputs:
+  #             provider: "azurerm"
+  #             command: "apply"
+  #             workingDirectory: "$(System.DefaultWorkingDirectory)/terraform/environments/test"
+  #             environmentServiceNameAzureRM: "$(azureServiceConnectionId)"
+  #     - job: PackageDeploymentFiles
+  #       dependsOn: BuildInfrastructure
+  #       condition: succeeded()
+  #       steps:
+  #         - task: ArchiveFiles@2
+  #           displayName: "Archive FakeRestAPI"
+  #           inputs:
+  #             rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi"
+  #             includeRootFolder: false
+  #             archiveType: "zip"
+  #             archiveFile: "$(Build.BuildId)-fakerestapi.zip"
 
-          - task: PublishPipelineArtifact@1
-            displayName: "Upload Package"
-            inputs:
-              targetPath: "$(Build.BuildId)-fakerestapi.zip"
-              artifact: "tanttn-fakerestapi"
+  #         - task: PublishPipelineArtifact@1
+  #           displayName: "Upload Package"
+  #           inputs:
+  #             targetPath: "$(Build.BuildId)-fakerestapi.zip"
+  #             artifact: "tanttn-fakerestapi"
 
-  - stage: DeployWebApp
-    dependsOn: CreateInfrastructure
-    condition: succeeded()
-    jobs:
-      - deployment: FakeRestAPI
-        pool:
-          vmImage: "ubuntu-latest"
-        environment: "tantnt-udacity-test-env"
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: AzureWebApp@1
-                  displayName: "Deploy Azure Web App"
-                  inputs:
-                    azureSubscription: "f0c56712-80d8-43e9-b7cb-fe2bcf946c53"
-                    appName: "tanttnUdacityDevops-AppService"
-                    appType: webApp
-                    package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-                    deploymentMethod: "auto"
+  # - stage: DeployWebApp
+  #   dependsOn: CreateInfrastructure
+  #   condition: succeeded()
+  #   jobs:
+  #     - deployment: FakeRestAPI
+  #       pool:
+  #         vmImage: "ubuntu-latest"
+  #       environment: "tantnt-udacity-test-env"
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - task: AzureWebApp@1
+  #                 displayName: "Deploy Azure Web App"
+  #                 inputs:
+  #                   azureSubscription: "f0c56712-80d8-43e9-b7cb-fe2bcf946c53"
+  #                   appName: "tanttnUdacityDevops-AppService"
+  #                   appType: webApp
+  #                   package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+  #                   deploymentMethod: "auto"
   - stage: Testing
     dependsOn: DeployWebApp
     condition: succeeded()
     jobs:
-      - job: JMeterTest
-        displayName: Performance testing by JMeter
-        pool:
-          vmImage: "ubuntu-latest"
-        steps:
-          - script: |
-              wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
-              tar -xzvf apache-jmeter-5.6.2.tgz
-            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: "Install JMeter"
-          - script: |
-              mkdir -p html-report/stress-test
-              apache-jmeter-5.6.2/bin/jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv -e -o html-report/stress-test
-            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: "Execute JMeter Test Stress Test"
+      # - job: JMeterTest
+      #   displayName: Performance testing by JMeter
+      #   pool:
+      #     vmImage: "ubuntu-latest"
+      #   steps:
+      #     - script: |
+      #         wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
+      #         tar -xzvf apache-jmeter-5.6.2.tgz
+      #       workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+      #       displayName: "Install JMeter"
+      #     - script: |
+      #         mkdir -p html-report/stress-test
+      #         apache-jmeter-5.6.2/bin/jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv -e -o html-report/stress-test
+      #       workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+      #       displayName: "Execute JMeter Test Stress Test"
 
-          - script: |
-              mkdir -p html-report/endurance-test
-              apache-jmeter-5.6.2/bin/jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv -e -o html-report/endurance-test
-            workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            displayName: "Execute JMeter Test Endurance Test"
+      #     - script: |
+      #         mkdir -p html-report/endurance-test
+      #         apache-jmeter-5.6.2/bin/jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv -e -o html-report/endurance-test
+      #       workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+      #       displayName: "Execute JMeter Test Endurance Test"
 
-          - task: ArchiveFiles@2
-            displayName: "Archive PerformanceTestSuite"
-            inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/html-report"
-              includeRootFolder: false
-              archiveType: "zip"
-              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
-          # JMeter Test Suite - Publish
-          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-            displayName: "Upload Performance Test Result"
-            artifact: tanttn-perftests
+      #     - task: ArchiveFiles@2
+      #       displayName: "Archive PerformanceTestSuite"
+      #       inputs:
+      #         rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/html-report"
+      #         includeRootFolder: false
+      #         archiveType: "zip"
+      #         archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
+      #     # JMeter Test Suite - Publish
+      #     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
+      #       displayName: "Upload Performance Test Result"
+      #       artifact: tanttn-perftests
       - job: SeleniumTest
         dependsOn: JMeterTest
         condition: succeeded()
@@ -165,13 +165,13 @@ stages:
               pip install pytest
               pip install pytest-html
             displayName: "Install Plugins"
-          - script: "pytest --html=report-ui.html test_ui.py"
+          - script: "pytest --html=report-ui.html login.py"
             workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
             displayName: "Execute UI Test Suite"
           - task: ArchiveFiles@2
             displayName: "Archive UI Test Suite"
             inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium/test_ui.log"
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/selenium"
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
