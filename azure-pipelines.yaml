@@ -115,7 +115,7 @@ stages:
                     appName: "tanttnUdacityDevops-AppService"
                     appType: webApp
                     package: $(Pipeline.Workspace)/tanttn-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-                    deploymentMethod: 'auto'
+                    deploymentMethod: "auto"
   - stage: Testing
     dependsOn: DeployWebApp
     condition: succeeded()
@@ -123,25 +123,44 @@ stages:
       - job: JMeterTest
         displayName: Performance testing
         pool:
-          vmImage: 'ubuntu-latest'
+          vmImage: "ubuntu-latest"
         steps:
+          - script: |
+            wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
+            tar -xzvf apache-jmeter-5.6.2.tgz
+          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+          displayName: 'Install JMeter'
           # JMeter (Performance) Test Suite - Archive
+          - script: |
+            jmeter -n -t StressTest-tanttn.jmx -l simple-result-stress-test.csv
+          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+          displayName: 'Execute JMeter Test Stress Test'
+          - script: |
+            jmeter -n -t EnduranceTest-tanttn.jmx -l simple-result-endurance-test.csv
+          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+          displayName: 'Execute JMeter Test Endurance Test'
+          - script: |
+            jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-stress-test.csv --generate-report html-report/stress-test
+            jmeter-report-builder --plugin-type HTMLDashboard --input-csv simple-result-endurance-test.csv --generate-report html-report/endurance-test
+          workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+          displayName: 'Generate HTML Report'
           - task: ArchiveFiles@2
-            displayName: 'Archive PerformanceTestSuite'
+            displayName: "Archive PerformanceTestSuite"
             inputs:
-              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/html-report"
               includeRootFolder: false
-              archiveType: 'zip'
-              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip"
           # JMeter Test Suite - Publish
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-            displayName: 'Upload Package'
+            displayName: "Upload Performance Test Result"
             artifact: tanttn-perftests
       - job: SeleniumTest
+        dependsOn: JMeterTest
+        condition: succeeded()
         displayName: UI Testing By Selenium
         pool:
-          vmImage: 'ubuntu-latest'
-          
+          vmImage: "ubuntu-latest"
         steps:
           - task: UsePythonVersion@0
             inputs:
@@ -151,22 +170,21 @@ stages:
               source env/bin/activate
               pip install -r requirements.txt
             workingDirectory: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium"
-            displayName: 'Set up Python environment'
+            displayName: "Set up Python environment"
           - script: |
               cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
               python login.py > test_ui.log
-            displayName: 'Execute UI Test Suite'
-          # JMeter (Performance) Test Suite - Archive
+            displayName: "Execute UI Test Suite"
           - task: ArchiveFiles@2
-            displayName: 'Archive UI Test Suite'
+            displayName: "Archive UI Test Suite"
             inputs:
               rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium/test_ui.log"
               includeRootFolder: false
-              archiveType: 'zip'
-              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip'
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip"
           # JMeter Test Suite - Publish
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
-            displayName: 'Upload Package'
+            displayName: "Upload UI Test Result"
             artifact: tanttn-test-ui
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
