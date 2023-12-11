@@ -42,7 +42,7 @@ def remove_item_from_cart(driver, itemNumber):
         addButtonElement = element.find_element_by_css_selector("button[id^='remove-']").click()
         itemRemoved += 1
         print (f'{descriptionItem} was removed from cart')
-        if(itemRemoved > itemNumber)
+        if(itemRemoved > itemNumber):
             break
     
     print (f'Total items was removed {itemNumber}')
