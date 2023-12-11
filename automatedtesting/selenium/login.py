@@ -1,6 +1,7 @@
 # #!/usr/bin/env python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from datetime import date
 
 def currentTime ():
     today = date.today()
