@@ -119,55 +119,56 @@ stages:
   - stage: Testing
     dependsOn: DeployWebApp
     condition: succeeded()
-    - job: JMeterTest
-      displayName: Performance testing
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-        # JMeter (Performance) Test Suite - Archive
-        - task: ArchiveFiles@2
-          displayName: 'Archive PerformanceTestSuite'
-          inputs:
-            rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
-            includeRootFolder: false
-            archiveType: 'zip'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
-        # JMeter Test Suite - Publish
-        - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
-          displayName: 'Upload Package'
-          artifact: tanttn-perftests
-    - job: SeleniumTest
-      displayName: UI Testing By Selenium
-      pool:
-        vmImage: 'ubuntu-latest'
-        
-      steps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: "${python.version}"
-            addToPath: true
-        - script: |
-            cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
-            python3 -m venv env
-            source env/bin/activate
-            pip install -r requirements.txt
-          displayName: 'Set up Python environment'
-        - script: |
-            cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
-            python login.py > test_ui.log
-          displayName: 'Execute UI Test Suite'
-        # JMeter (Performance) Test Suite - Archive
-        - task: ArchiveFiles@2
-          displayName: 'Archive UI Test Suite'
-          inputs:
-            rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium/test_ui.log"
-            includeRootFolder: false
-            archiveType: 'zip'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip'
-        # JMeter Test Suite - Publish
-        - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
-          displayName: 'Upload Package'
-          artifact: tanttn-test-ui
+    jobs:
+      - job: JMeterTest
+        displayName: Performance testing
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          # JMeter (Performance) Test Suite - Archive
+          - task: ArchiveFiles@2
+            displayName: 'Archive PerformanceTestSuite'
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/jmeter"
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
+          # JMeter Test Suite - Publish
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip
+            displayName: 'Upload Package'
+            artifact: tanttn-perftests
+      - job: SeleniumTest
+        displayName: UI Testing By Selenium
+        pool:
+          vmImage: 'ubuntu-latest'
+          
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "${python.version}"
+              addToPath: true
+          - script: |
+              cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
+              python3 -m venv env
+              source env/bin/activate
+              pip install -r requirements.txt
+            displayName: 'Set up Python environment'
+          - script: |
+              cd $(System.DefaultWorkingDirectory)/automatedtesting/selenium
+              python login.py > test_ui.log
+            displayName: 'Execute UI Test Suite'
+          # JMeter (Performance) Test Suite - Archive
+          - task: ArchiveFiles@2
+            displayName: 'Archive UI Test Suite'
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/automatedtesting/selenium/test_ui.log"
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip'
+          # JMeter Test Suite - Publish
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-test-ui.zip
+            displayName: 'Upload Package'
+            artifact: tanttn-test-ui
 #     # ToDo: Change the workingDirectory path, as applicable to you
 #     # Destroy the resources in Azure by running a separate pipeline.
 #     # - task: TerraformTaskV3@3
