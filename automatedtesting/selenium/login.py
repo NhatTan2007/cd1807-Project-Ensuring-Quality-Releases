@@ -22,7 +22,7 @@ def login (user, password):
     print (f'Login with user name {user} and password {password} successfuly')
     return driver
 
-def add_item_to_cart(driver, itemNumber)
+def add_item_to_cart(driver, itemNumber):
     print ('Adding items to cart')
 
     itemElements = driver.find_elements_by_css_selector("div.inventory_item")
@@ -33,7 +33,7 @@ def add_item_to_cart(driver, itemNumber)
 
     print (f'Total items was added {itemNumber}')
 
-def remove_item_from_cart(driver, itemNumber)
+def remove_item_from_cart(driver, itemNumber):
     print ('Removing items from cart')
     itemElements = driver.find_elements_by_css_selector("div.cart_item")
     itemRemoved = 0
