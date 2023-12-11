@@ -10,7 +10,6 @@ def currentTime ():
 # Start the browser and login with standard_user
 def login (user, password):
     print ('Starting the browser...')
-    currentTime()
     options = ChromeOptions()
     options.add_argument("--headless") 
     driver = webdriver.Chrome(options=options)
@@ -48,4 +47,14 @@ def remove_item_from_cart(driver, itemNumber):
             break
     
     print (f'Total items was removed {itemNumber}')
+
+if __name__ == "__main__": 
+    itemNumber = 6 
+    testUsername = 'standard_user' 
+    testPassword = 'secret_sauce'
+    currentTime()
+    driver = login(testUsername, testPassword) 
+    add_item_to_cart(driver, itemNumber)
+    remove_item_from_cart(driver, itemNumber)
+    print(timestamp() + 'Selenium tests are all successfully completed!') 
 
