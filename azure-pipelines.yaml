@@ -139,7 +139,8 @@ stages:
     condition: succeeded()
     jobs:
       - job: TestPostman
-        pool: MyLinux
+        pool:
+          vmImage: "ubuntu-latest"
         steps:
         - task: NodeTool@0
           inputs:
