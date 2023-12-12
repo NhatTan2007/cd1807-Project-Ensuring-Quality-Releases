@@ -125,7 +125,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "  {\r\n    \"ID\": 7,\r\n    \"Title\": {{title}},\r\n    \"Description\": {{description}},\r\n    \"PageCount\": {{$randomInt}},\r\n    \"Excerpt\": {{excerpt}},\r\n    \"PublishDate\": {{publishDate}}\r\n  }",
+					"raw": "  {\r\n    \"ID\": {{id}},\r\n    \"Title\": {{title}},\r\n    \"Description\": {{description}},\r\n    \"PageCount\": {{$randomInt}},\r\n    \"Excerpt\": {{excerpt}},\r\n    \"PublishDate\": {{publishDate}}\r\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -133,12 +133,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/{{path}}",
+					"raw": "{{url}}/{{path}}/{{id}}",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"{{path}}"
+						"{{path}}",
+						"{{id}}"
 					]
 				}
 			},
