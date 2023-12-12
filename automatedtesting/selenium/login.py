@@ -29,7 +29,7 @@ def add_item_to_cart(driver, itemNumber):
     print ('Adding items to cart')
 
     itemElements = driver.find_elements("css selector", "div.inventory_item")
-    for element in range(itemElements):
+    for element in itemElements:
         descriptionItem = element.find_element("css selector", "div.inventory_item_name").text
         addButtonElement = element.find_element("css selector", "button[id^='add-to']").click()
         print (f'{descriptionItem} was added to cart')
@@ -40,7 +40,7 @@ def remove_item_from_cart(driver, itemNumber):
     print ('Removing items from cart')
     itemElements = driver.find_elements("css selector", "div.cart_item")
     itemRemoved = 0
-    for element in range(itemElements):
+    for element in itemElements:
         descriptionItem = element.find_element("css selector", "div.inventory_item_name").text
         addButtonElement = element.find_element("css selector", "button[id^='remove-']").click()
         itemRemoved += 1
