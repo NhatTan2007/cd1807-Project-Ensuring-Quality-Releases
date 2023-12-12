@@ -1,7 +1,7 @@
 # #!/usr/bin/env python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
-from datetime import date
+from datetime import date, datetime
 
 def getTimestamp():
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
