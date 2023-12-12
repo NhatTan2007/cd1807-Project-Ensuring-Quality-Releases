@@ -58,5 +58,5 @@ if __name__ == "__main__":
     driver = login(testUsername, testPassword) 
     add_item_to_cart(driver, itemNumber)
     remove_item_from_cart(driver, itemNumber)
-    print(timestamp() + 'Selenium tests are all successfully completed!') 
+    print('Selenium tests are all successfully completed!') 
 
