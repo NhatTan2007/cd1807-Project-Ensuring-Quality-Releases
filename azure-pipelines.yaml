@@ -262,6 +262,8 @@ stages:
                       sudo cp /var/log/selenium/ui-logs.log log/selenium
                   displayName: "Execute UI Test Suite"
                 # JMeter Test Suite - Publish
-                - publish: $(Build.ArtifactStagingDirectory)/log/selenium/ui-logs.log
-                  displayName: "Upload UI Test Result"
-                  artifact: tanttn-test-ui
+                - task: PublishPipelineArtifact@1
+                  displayName: 'Upload Selenium Result'
+                  inputs:
+                    targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
+                    artifact: 'tanttn-selenium-logs'

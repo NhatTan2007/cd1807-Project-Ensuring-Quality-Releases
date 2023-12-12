@@ -38,6 +38,7 @@ def add_item_to_cart(driver, itemNumber):
 
 def remove_item_from_cart(driver, itemNumber):
     print ('Removing items from cart')
+    driver.find_element("css selector", "a.shopping_cart_link").click()
     itemElements = driver.find_elements("css selector", "div.cart_item")
     itemRemoved = 0
     for element in itemElements:
@@ -51,7 +52,7 @@ def remove_item_from_cart(driver, itemNumber):
     print (f'Total items was removed {itemNumber}')
 
 if __name__ == "__main__": 
-    itemNumber = 5 
+    itemNumber = 6 
     testUsername = 'standard_user' 
     testPassword = 'secret_sauce'
     currentTime()
