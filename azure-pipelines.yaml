@@ -210,8 +210,6 @@ stages:
         dependsOn: JMeterTest
         condition: succeeded()
         displayName: UI Testing By Selenium
-        pool:
-          vmImage: "ubuntu-latest"
         environment:
           name: "tantnt-udacity-test-env"
           resourceType: VirtualMachine
