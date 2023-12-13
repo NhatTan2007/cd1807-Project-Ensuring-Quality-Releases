@@ -211,7 +211,7 @@ stages:
         condition: succeeded()
         displayName: UI Testing By Selenium
         environment:
-          name: "test-env-tantnt"
+          name: "tantnt-udacity-test-env"
           resourceType: VirtualMachine
         strategy:
           runOnce:
